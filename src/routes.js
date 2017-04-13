@@ -1,4 +1,5 @@
 import HttpDispatcher from 'httpdispatcher';
+import pathRegexp from 'path-to-regexp';
 import fs from 'fs';
 
 const dispatcher = new HttpDispatcher();
@@ -17,11 +18,20 @@ dispatcher.onGet('/', (req, res) => {
   res.end('hello world');
 });
 
+const keys = [];
+const re = pathRegexp('/files/:id', keys);
+
+dispatcher.onGet(re, (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  // TODO fs.readFile with lang extension
+  res.end(JSON.stringify({ data: 'really?' }));
+});
+
 dispatcher.onPost('/files/create', (req, res) => {
   console.log('here i am');
   const timestamp = new Date().getTime();
   const jsonBody = JSON.parse(req.body);
-  fs.writeFile(`./uploads/${timestamp}`, jsonBody.fileContents, 'utf-8', (err) => {
+  fs.writeFile(`./uploads/${timestamp}.${jsonBody.lang}`, jsonBody.fileContents, 'utf-8', (err) => {
     res.writeHead(200, { 'Content-Type': 'plain/text' });
     console.log('am i here');
     res.end(JSON.stringify({ fileUUID: timestamp }));
