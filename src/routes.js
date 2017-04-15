@@ -27,15 +27,15 @@ dispatcher.onGet(re, (req, res) => {
   res.end(JSON.stringify({ data: 'really?' }));
 });
 
-dispatcher.onPost('/files/create', (req, res) => {
+dispatcher.onPost('/create', (req, res) => {
   console.log('here i am');
   const timestamp = new Date().getTime();
   const jsonBody = JSON.parse(req.body);
-  fs.writeFile(`./uploads/${timestamp}.${jsonBody.lang}`, jsonBody.fileContents, 'utf-8', (err) => {
+  // console.log(jsonBody.file_contents);
+  fs.writeFile(`./uploads/${timestamp}`, jsonBody.file_contents, 'utf-8', (err) => {
     res.writeHead(200, { 'Content-Type': 'plain/text' });
-    console.log('am i here');
-    res.end(JSON.stringify({ fileUUID: timestamp }));
-    console.log('am i here');
+    console.log(`new file id is ${timestamp}`);
+    res.end(JSON.stringify({ file_uuid: timestamp }));
   });
 });
 
